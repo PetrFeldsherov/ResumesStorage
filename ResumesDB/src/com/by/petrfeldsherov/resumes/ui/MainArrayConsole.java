@@ -3,7 +3,10 @@ package com.by.petrfeldsherov.resumes.ui;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
 
+import com.by.petrfeldsherov.resumes.exception.StorageException;
 import com.by.petrfeldsherov.resumes.model.Resume;
 import com.by.petrfeldsherov.resumes.storage.ArrayStorage;
 
@@ -14,52 +17,58 @@ public class MainArrayConsole {
 	BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 	while (true) {
 	    System.out.println(
-		    "Type in one of the following commands:\n\tlist\n\tlist <fullName>\n\tsize\n\tsave <fullName>\n\tget <uuid>\n\tdelete <uuid>\n\tclear\n\texit");
-	    String[] parameters = reader.readLine().trim().toLowerCase().split(" ");
-	    if (!isValidCommand(parameters)) {
+		    "Available commands:\n\tlist\n\tsize\n\tsave <fullName>\n\tdelete <uuid>\n\tget <uuid>\n\tclear\n\texit");
+	    String[] arguments = reader.readLine().trim().split(" ");
+	    if (arguments.length == 1 && arguments[0].equals("exit")) {
+		return;
+	    }
+	    if (!isValidCommand(arguments)) {
 		System.out.println("Invalid command.");
 		continue;
 	    }
-	    String parameter = (parameters.length > 1) ? parameters[1].intern() : null;
-	    switch (parameters[0]) {
-	    case "list":
-		Resume[] allResumes = STORAGE.getAll();
-		if (parameter == null) {
-		    for (Resume r : allResumes) {
-			System.out.println(r);
+	    String parameter = (arguments.length == 1) ? null : arguments[1];
+	    try {
+		switch (arguments[0]) {
+		case "list":
+		    List<Resume> allResumes = STORAGE.getAllSorted();
+		    for (Resume resume : allResumes) {
+			System.out.println(resume);
 		    }
-		} else {
-		    for (Resume r : allResumes) {
-			if (r.getFullName().equals(parameter)) {
-			    System.out.println(r.getUuid());
-			}
-		    }
+		    System.out.println("\t" + STORAGE.size() + " resumes in total.");
+		    break;
+		case "size":
+		    System.out.println("There are " + STORAGE.size() + " resumes in the storage.");
+		    break;
+		case "save":
+		    STORAGE.save(new Resume(parameter));
+		    break;
+		case "delete":
+		    STORAGE.delete(parameter);
+		    break;
+		case "get":
+		    System.out.println(STORAGE.get(parameter));
+		    break;
+		case "clear":
+		    STORAGE.clear();
+		    break;
 		}
-		break;
-	    case "size":
-		System.out.println(STORAGE.size());
-		break;
-	    case "save":
-		STORAGE.save(new Resume(parameter));
-		break;
-	    case "get":
-		System.out.println(STORAGE.get(parameter));
-	    case "delete":
-		STORAGE.delete(parameter);
-		break;
-	    case "clear":
-		STORAGE.clear();
-		break;
-	    case "exit":
-		return;
+	    } catch (StorageException e) {
+		System.out.println(e.getMessage());
 	    }
 	}
     }
 
-    private static boolean isValidCommand(String[] parameters) {
-	if (!(parameters.length >= 1 && parameters.length <= 2)) {
-	    return false;
+    private static boolean isValidCommand(String[] arguments) {
+	for (ConsoleCommandFormat format : ConsoleCommandFormat.values()) {
+	    if (format.getKeyWord().equals(arguments[0])) {
+		String[] parameters = Arrays.copyOfRange(arguments, 1, arguments.length);
+		if (format.parametersAreValid(parameters)) {
+		    return true;
+		} else {
+		    return false;
+		}
+	    }
 	}
-	return true;
+	return false;
     }
 }

@@ -1,5 +1,6 @@
 package com.by.petrfeldsherov.resumes.exception;
 
+@SuppressWarnings("serial")
 public class StorageException extends RuntimeException {
 
     private String uuid;

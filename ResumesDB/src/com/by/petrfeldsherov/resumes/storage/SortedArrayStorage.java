@@ -1,9 +1,20 @@
 package com.by.petrfeldsherov.resumes.storage;
 
 import java.util.Arrays;
+import java.util.List;
+
 import com.by.petrfeldsherov.resumes.model.Resume;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
+
+    // sorted by uuid, the possibility of application of this class is in terms of
+    // domain logic grotesque
+
+    @Override
+    public List<Resume> getAllSorted() {
+	LOG.info("GET ALL SORTED");
+	return Arrays.asList(Arrays.copyOf(storage, size));
+    }
 
     @Override
     protected int getIndex(String uuid) {
@@ -30,8 +41,8 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     @Override
     protected void insertResume(Resume resume, int resumeIndex) {
 	// https://codereview.stackexchange.com/a/36239
-	//binarySearch returns -insertPos-1 if not found, j is insertPos
-	int j = -1 * Arrays.binarySearch(storage, 0, size, resume, new UuidComparator()) - 1;
+	// binarySearch returns -insertPos-1 if not found, j is insertPos
+	int j = -1 * Arrays.binarySearch(storage, 0, size, resume, new ResumeUuidComparator()) - 1;
 	System.arraycopy(storage, j, storage, j + 1, size - j);
 	storage[j] = resume;
     }

@@ -1,8 +1,19 @@
 package com.by.petrfeldsherov.resumes.storage;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.by.petrfeldsherov.resumes.model.Resume;
 
 public class ArrayStorage extends AbstractArrayStorage {
+
+    @Override
+    public List<Resume> getAllSorted() {
+	LOG.info("GET ALL SORTED");
+	Resume[] storageCopy = Arrays.copyOf(storage, size);
+	Arrays.sort(storageCopy, new ResumeComparator());
+	return Arrays.asList(storageCopy);
+    }
 
     @Override
     protected int getIndex(String uuid) {
