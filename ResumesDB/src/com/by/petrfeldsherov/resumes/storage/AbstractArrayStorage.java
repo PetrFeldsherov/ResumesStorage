@@ -8,6 +8,7 @@ import com.by.petrfeldsherov.resumes.exception.AlreadyExistsException;
 import com.by.petrfeldsherov.resumes.exception.NotFoundException;
 import com.by.petrfeldsherov.resumes.exception.StorageException;
 import com.by.petrfeldsherov.resumes.model.Resume;
+import com.by.petrfeldsherov.resumes.ui.Storage;
 
 public abstract class AbstractArrayStorage implements Storage {
     private static final Logger LOG = Logger.getLogger(ArrayStorage.class.getName());

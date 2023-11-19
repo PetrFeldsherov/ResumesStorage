@@ -1,4 +1,4 @@
-package com.by.petrfeldsherov.resumes.storage;
+package com.by.petrfeldsherov.resumes.ui;
 
 import com.by.petrfeldsherov.resumes.model.Resume;
 
