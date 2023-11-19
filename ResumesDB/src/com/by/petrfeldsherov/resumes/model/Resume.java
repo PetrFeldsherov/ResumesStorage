@@ -3,21 +3,37 @@ package com.by.petrfeldsherov.resumes.model;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Resume {
+public class Resume implements Comparable<Resume> {
 
     private final String uuid;
-
-    public Resume(String uuid) {
-	this.uuid = uuid;
-    }
+    private final String fullName;
 
     public Resume() {
-	this(UUID.randomUUID().toString());
+	this(UUID.randomUUID().toString(), "GUEST" + UUID.randomUUID().toString().substring(0, 10));
+    }
+
+    public Resume(String fullName) {
+	this(UUID.randomUUID().toString(), fullName);
+    }
+
+    private Resume(String uuid, String fullName) {
+	Objects.requireNonNull(uuid, "uuid mustn't be null");
+	Objects.requireNonNull(fullName, "full name mustn't be null");
+	this.uuid = uuid;
+	this.fullName = fullName;
+    }
+
+    public String getUuid() {
+	return uuid;
+    }
+
+    public String getFullName() {
+	return fullName;
     }
 
     @Override
     public int hashCode() {
-	return Objects.hash(uuid);
+	return Objects.hash(fullName, uuid);
     }
 
     @Override
@@ -29,16 +45,18 @@ public class Resume {
 	if (getClass() != obj.getClass())
 	    return false;
 	Resume other = (Resume) obj;
-	return uuid.equals(other.getUuid());
+	return Objects.equals(fullName, other.fullName) && Objects.equals(uuid, other.uuid);
     }
 
     @Override
     public String toString() {
-	return uuid;
+	return "Resume [fullName=" + fullName + "]";
     }
 
-    public String getUuid() {
-	return uuid;
+    @Override
+    public int compareTo(Resume o) {
+	int cmpFN = fullName.compareTo(o.getFullName());
+	return cmpFN != 0 ? cmpFN : uuid.compareTo(o.getUuid());
     }
 
 }
