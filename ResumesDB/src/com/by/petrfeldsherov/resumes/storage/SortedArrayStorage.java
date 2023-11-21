@@ -39,19 +39,19 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected void insertResume(Resume resume, int resumeIndex) {
-	// https://codereview.stackexchange.com/a/36239
-	// binarySearch returns -insertPos-1 if not found, j is insertPos
-	int j = -1 * Arrays.binarySearch(storage, 0, size, resume, new ResumeUuidComparator()) - 1;
+    protected void insertResume(int i, Resume r) {
+	// https://codereview.stackexchange.com/a/36239, binarySearch returns
+	// -insertPos-1 if not found, j is insertPos
+	int j = -1 * Arrays.binarySearch(storage, 0, size, r, new ResumeUuidComparator()) - 1;
 	System.arraycopy(storage, j, storage, j + 1, size - j);
-	storage[j] = resume;
+	storage[j] = r;
     }
 
     @Override
-    protected void deleteResume(int resumeIndex) {
-	int shiftLength = size - resumeIndex - 1;
+    protected void deleteResume(int i) {
+	int shiftLength = size - i - 1;
 	if (shiftLength > 0) {
-	    System.arraycopy(storage, resumeIndex + 1, storage, resumeIndex, shiftLength);
+	    System.arraycopy(storage, i + 1, storage, i, shiftLength);
 	}
     }
 
