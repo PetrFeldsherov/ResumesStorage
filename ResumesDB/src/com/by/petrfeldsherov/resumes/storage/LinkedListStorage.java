@@ -16,10 +16,12 @@ public class LinkedListStorage extends AbstractStorage {
     }
 
     @Override
-    public void save(Resume resume) {
+    public void save(Resume resume) throws AlreadyExistsException {
+	LOG.info("SAVE " + resume.getUuid());
 	String uuid = resume.getUuid();
 	for (int i = 0; i < size(); i++) {
 	    if (uuid.equals(storage.get(i).getUuid())) {
+		LOG.warning("Resume with uuid " + uuid + " already exists.");
 		throw new AlreadyExistsException(uuid);
 	    }
 	}
@@ -27,28 +29,33 @@ public class LinkedListStorage extends AbstractStorage {
     }
 
     @Override
-    public Resume get(String uuid) {
+    public Resume get(String uuid) throws NotFoundException {
+	LOG.info("GET  " + uuid);
 	for (int i = 0; i < size(); i++) {
 	    if (uuid.equals(storage.get(i).getUuid())) {
 		return storage.get(i);
 	    }
 	}
+	LOG.warning("Resume with uuid " + uuid + " is not found.");
 	throw new NotFoundException(uuid);
     }
 
     @Override
-    public void delete(String uuid) {
+    public void delete(String uuid) throws NotFoundException {
+	LOG.info("DELETE  " + uuid);
 	for (int i = 0; i < size(); i++) {
 	    if (uuid.equals(storage.get(i).getUuid())) {
 		storage.remove(i);
 		return;
 	    }
 	}
+	LOG.warning("Resume with uuid " + uuid + " is not found.");;
 	throw new NotFoundException(uuid);
     }
 
     @Override
     public void clear() {
+	LOG.info("CLEAR");
 	storage.clear();
     }
 
